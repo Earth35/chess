@@ -26,7 +26,38 @@ class Board
   end
   
   def populate_chessboard
-    
+    @state.each_with_index do |row, index|
+      case index
+      when 0
+        populate_with_figures(row, :white)
+      when 1
+        populate_with_pawns(row, :white)
+      when 6
+        populate_with_pawns(row, :black)
+      when 7
+        populate_with_figures(row, :black)
+      end
+    end
+  end
+  
+  def populate_with_pawns (row, color)
+    i = 0
+    while i < row.length
+      piece = Pawn.new(color)
+      row[i] = piece
+      i += 1
+    end
+  end
+  
+  def populate_with_figures (row, color)
+    row[0] = Rook.new(color)
+    row[1] = Knight.new(color)
+    row[2] = Bishop.new(color)
+    row[3] = Queen.new(color)
+    row[4] = King.new(color)
+    row[5] = Bishop.new(color)
+    row[6] = Knight.new(color)
+    row[7] = Rook.new(color)
   end
   
 end
