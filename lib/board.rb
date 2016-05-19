@@ -29,35 +29,35 @@ class Board
     @state.each_with_index do |row, index|
       case index
       when 0
-        populate_with_figures(row, :white)
+        populate_with_figures(index, row, :white)
       when 1
-        populate_with_pawns(row, :white)
+        populate_with_pawns(index, row, :white)
       when 6
-        populate_with_pawns(row, :black)
+        populate_with_pawns(index, row, :black)
       when 7
-        populate_with_figures(row, :black)
+        populate_with_figures(index, row, :black)
       end
     end
   end
   
-  def populate_with_pawns (row, color)
+  def populate_with_pawns (row_number, row, color)
     i = 0
     while i < row.length
-      piece = Pawn.new(color)
+      piece = Pawn.new(color, [row_number, i])
       row[i] = piece
       i += 1
     end
   end
   
-  def populate_with_figures (row, color)
-    row[0] = Rook.new(color)
-    row[1] = Knight.new(color)
-    row[2] = Bishop.new(color)
-    row[3] = Queen.new(color)
-    row[4] = King.new(color)
-    row[5] = Bishop.new(color)
-    row[6] = Knight.new(color)
-    row[7] = Rook.new(color)
+  def populate_with_figures (row_number, row, color)
+    row[0] = Rook.new(color, [row_number, 0])
+    row[1] = Knight.new(color, [row_number, 1])
+    row[2] = Bishop.new(color, [row_number, 2])
+    row[3] = Queen.new(color, [row_number, 3])
+    row[4] = King.new(color, [row_number, 4])
+    row[5] = Bishop.new(color, [row_number, 5])
+    row[6] = Knight.new(color, [row_number, 6])
+    row[7] = Rook.new(color, [row_number, 7])
   end
   
 end
