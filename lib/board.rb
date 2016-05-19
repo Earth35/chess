@@ -6,6 +6,27 @@ class Board
     populate_chessboard
   end
   
+  def draw_board (state)
+    visual_board = "\n"
+    i = 8
+    state.each do |row|
+      visual_row = " #{i}|"
+      row.each do |contents|
+        if contents.is_a?(Piece)
+          visual_row << "#{contents.symbol}|"
+        else
+          visual_row << " |"
+        end
+      end
+      visual_row << "\n"
+      visual_board << visual_row.center(30)
+      visual_board << draw_separator
+      i -= 1
+    end
+    visual_board << draw_letters
+    return visual_board
+  end
+  
   private
   
   def make_chessboard
@@ -58,6 +79,19 @@ class Board
     row[5] = Bishop.new(color, [row_number, 5])
     row[6] = Knight.new(color, [row_number, 6])
     row[7] = Rook.new(color, [row_number, 7])
+  end
+  
+  def draw_separator
+    "  " + "-" * 17 + "\n"
+  end
+  
+  def draw_letters
+    line = " " * 3
+    ('A'..'H').to_a.each do |letter|
+      line << "#{letter} "
+    end
+    line << "\n"
+    return line.center(30)
   end
   
 end

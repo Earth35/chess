@@ -11,6 +11,6 @@ require './lib/king'
 require 'yaml'
 
 game = Chess.new
-game.board.state.each do |row|
-p row
-end
+puts "Trying to draw the board:"
+puts game.board.draw_board(game.board.state)
+
