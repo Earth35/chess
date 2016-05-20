@@ -9,6 +9,28 @@ class Chess
     @current_player = @player_1
   end
   
+  def move
+    move_valid = false
+    while !move_valid
+      puts "Make a move or type 'save' to save the game:"
+      user_input = gets.chomp.downcase # e.g. a0, a1
+      if user_input == 'save'
+        save_state # under construction!
+        puts "Please make a move:"
+        user_input = gets.chomp.downcase # e.g. a0, a1
+      end
+      until input_valid?(user_input)  # checkpoint 1 - checks if the player doesn't try to move beyond the board
+        puts "Invalid input. Correct formatting example: a1, a5"
+        user_input = gets.chomp.downcase
+      end
+      raw_coords = user_input.split(/, /)
+      coordinates = input_to_coords(raw_coords[0], raw_coords[1])
+      p coordinates
+      move_valid = validate_move(@board.state, coordinates)
+    end
+    puts "Move valid. Ending."
+  end
+  
   private
   
   # converts strings to arrays of coordinates, e.g. "a1" and "a2" => [[0, 0], [0, 1]]
@@ -28,6 +50,38 @@ class Chess
     source_out = [coord_map[source_in[0]], coord_map[source_in[1]]]
     target_in = target.split(//)
     target_out = [coord_map[target_in[0]], coord_map[target_in[1]]]
-    return[source_out, target_out]
+    return [source_out, target_out]
   end
+  
+  def input_valid? (input)
+    # correct format: e.g. 'a1, a6'
+    result = input =~ /^[a-h][1-8], [a-h][1-8]$/ ? true : false
+  end
+  
+  def validate_move (board, coordinates)
+    # coordinates: [[initial_position], [target_position]]
+    # find initial position and check if nil
+    initial_position = board[coordinates[0][1]][coordinates[0][0]]
+    if initial_position.nil?
+      puts "Invalid initial position. Selected empty square."
+      return false
+    elsif initial_position.color != @current_player.color
+      puts "Invalid initial position. Selected opponent's piece."
+      return false
+    end
+    # find target position and check if nil or opposite color
+    target_position = board[coordinates[1][1]][coordinates[1][0]]
+    if target_position.nil?
+      return true
+    elsif target_position.color != @current_player.color
+      return true
+    end
+    puts "Invalid target position."
+    return false
+  end
+  
+  def save_state
+    # to be done
+  end
+  
 end
