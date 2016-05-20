@@ -9,7 +9,9 @@ class Board
   def draw_board (state)
     visual_board = "\n"
     i = 8
-    state.each do |row|
+    contents = state.dup
+    while i > 0
+    row = contents.pop
       visual_row = " #{i}|"
       row.each do |contents|
         if contents.is_a?(Piece)

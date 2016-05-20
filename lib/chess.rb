@@ -25,10 +25,9 @@ class Chess
       end
       raw_coords = user_input.split(/, /)
       coordinates = input_to_coords(raw_coords[0], raw_coords[1])
-      p coordinates
       move_valid = validate_move(@board.state, coordinates)
     end
-    puts "Move valid. Ending."
+    move_selected_piece(@board.state, coordinates)
   end
   
   private
@@ -78,6 +77,12 @@ class Chess
     end
     puts "Invalid target position."
     return false
+  end
+  
+  def move_selected_piece (board, coordinates)
+    # move piece from initial to target position, then change initial position to nil
+    board[coordinates[1][1]][coordinates[1][0]] = board[coordinates[0][1]][coordinates[0][0]]
+    board[coordinates[0][1]][coordinates[0][0]] = nil
   end
   
   def save_state
