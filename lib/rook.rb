@@ -18,6 +18,7 @@ class Rook < Piece
   def find_valid_positions (board, coordinates, myself, valid_positions)
     slide_vectors = [[0, 1], [1, 0], [0, -1], [-1, 0]]
     slide_vectors.each do |vector|
+      # seeks valid positions in specific direction
       update_valid_positions(vector[0], vector[1], board, valid_positions, myself)
     end
   end
@@ -29,7 +30,6 @@ class Rook < Piece
     col = initial_position[1] + col_mod
     while (0..7).include?(row) && (0..7).include?(col)
       next_square = board[row][col]
-      p "Coords: #{row}, #{col}"
       if next_square.nil?
         # valid position, add to array and continue searching
         valid_positions << [row, col]
