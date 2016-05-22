@@ -16,7 +16,7 @@ class Rook < Piece
   private
   
   def find_valid_positions (board, coordinates, myself, valid_positions)
-    slide_vectors = [[1, 0], [-1, 0], [0, -1], [0, 1]]
+    slide_vectors = [[0, 1], [1, 0], [0, -1], [-1, 0]]
     slide_vectors.each do |vector|
       update_valid_positions(vector[0], vector[1], board, valid_positions, myself)
     end
