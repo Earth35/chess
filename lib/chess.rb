@@ -9,6 +9,21 @@ class Chess
     @current_player = @player_1
   end
   
+  ###########
+  #TEMPORARY#
+  ###########
+  def switch_players
+    if @current_player == @player_1
+      @current_player = @player_2
+    else
+      @current_player = @player_1
+    end
+    puts "Switched players."
+  end
+  ###########
+  #TEMPORARY#
+  ###########
+  
   def move
     move_valid = false
     while !move_valid
@@ -70,7 +85,7 @@ class Chess
     end
     # find target position and check if nil or opposite color
     target_position = board[coordinates[1][1]][coordinates[1][0]]
-    if initial_position.movement_valid?(coordinates)
+    if initial_position.movement_valid?(board, coordinates)
       if target_position.nil?
         return true
       elsif target_position.color != @current_player.color
