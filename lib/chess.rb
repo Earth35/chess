@@ -103,6 +103,7 @@ class Chess
   def move_selected_piece (board, coordinates)
     # move piece from initial to target position, then change initial position to nil
     board[coordinates[1][1]][coordinates[1][0]] = board[coordinates[0][1]][coordinates[0][0]]
+    board[coordinates[1][1]][coordinates[1][0]].position = [coordinates[1][1], coordinates[1][0]]
     board[coordinates[0][1]][coordinates[0][0]] = nil
   end
   

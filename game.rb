@@ -10,3 +10,5 @@ require './lib/queen'
 require './lib/king'
 require 'yaml'
 
+game = Chess.new
+
