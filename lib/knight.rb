@@ -11,7 +11,6 @@ class Knight < Piece
       [1, 2], [1, -2], [2, 1], [2, -1]
     ]
     vector = [coordinates[0][0] - coordinates[1][0], coordinates[0][1] - coordinates[1][1]]
-    p "Vector: #{vector}"
     return valid_vectors.include?(vector) ? true : false
   end
 end
