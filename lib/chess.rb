@@ -46,8 +46,7 @@ class Chess
       if move_valid
         move_selected_piece(@board.state, coordinates)
         king_position = @board.state[coordinates[0][1]][coordinates[0][0]].class == King ? coordinates[1].reverse : @current_player.king.position
-        danger_zones = find_danger_zones(@current_player.king, @board.state, coordinates)
-        p danger_zones
+        danger_zones = find_danger_zones(@current_player.king, @board.state)
         move_valid = danger_zones.include?(king_position) ? false : true
         if !move_valid
           puts "Invalid move, your King would be at risk"
@@ -55,6 +54,49 @@ class Chess
         end
       end
     end
+  end
+  
+  def checkmate?
+    status = false
+    opponent = @current_player == @player_1 ? @player_2 : @player_1
+    danger_zones = find_danger_zones(opponent.king, @board.state)
+    puts "Check!" if danger_zones.include?(opponent.king.position)
+    king_escape_options = opponent.king.danger_zones(@board.state)
+    possible_moves = 0
+    king_escape_options.each { |square| possible_moves += 1 if !danger_zones.include?(square) }
+    countermeasures = false
+    # check possible opponent moves in next turn and 'danger zones' for each of them
+    # if king no longer is in at risk, don't call checkmate and stop searching
+    row = 0
+    col = 0
+    while (0..7).include?(row)
+      while (0..7).include?(col)
+        position = @board.state[row][col]
+        if !position.nil?
+          if position.color == opponent.king.color
+            next_possible_moves = position.danger_zones(@board.state)
+            next_possible_moves.each do |move|
+              move_selected_piece_mock(@board.state, [[col, row], move.reverse])
+              new_danger_zones = find_danger_zones(opponent.king, @board.state)
+              if !new_danger_zones.include?(opponent.king.position)
+                countermeasures = true
+                move_selected_piece_mock(@board.state, [move.reverse, [col, row]])
+                break
+              end
+              move_selected_piece_mock(@board.state, [move.reverse, [col, row]])
+            end
+          end
+        end
+        col += 1
+      end
+      col = 0
+      row += 1
+    end
+    if possible_moves == 0 && danger_zones.include?(opponent.king.position) && !countermeasures
+      puts "Checkmate!"
+      status = game_over(@current_player)
+    end
+    return status
   end
   
   private
@@ -119,7 +161,14 @@ class Chess
     board[coordinates[0][1]][coordinates[0][0]] = nil
   end
   
-  def find_danger_zones (king, board, coordinates)
+  def move_selected_piece_mock (board, coordinates)
+    # move piece from initial to target position, then change initial position to nil
+    board[coordinates[1][1]][coordinates[1][0]], board[coordinates[0][1]][coordinates[0][0]]  = board[coordinates[0][1]][coordinates[0][0]], board[coordinates[1][1]][coordinates[1][0]]
+    board[coordinates[1][1]][coordinates[1][0]].position = [coordinates[1][1], coordinates[1][0]]
+    # board[coordinates[0][1]][coordinates[0][0]] = nil
+  end
+  
+  def find_danger_zones (king, board)
     danger_zones = []
     row = 0
     while row < 8
@@ -127,7 +176,6 @@ class Chess
       while column < 8
         position = board[row][column]
         unless position.nil?
-          p "Current position: #{row}, #{column} (#{position})"
           danger_zones = danger_zones.concat(position.danger_zones(board)).uniq if position.color != king.color
         end
         column += 1
@@ -141,4 +189,8 @@ class Chess
     # to be done
   end
   
+  def game_over (winner)
+    puts "#{winner.color.to_s.capitalize} player has won!"
+    return true
+  end
 end
