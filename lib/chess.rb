@@ -43,10 +43,16 @@ class Chess
       raw_coords = user_input.split(/, /)
       coordinates = input_to_coords(raw_coords[0], raw_coords[1])
       move_valid = validate_move(@board.state, coordinates)
-      move_valid = king_safe?(@current_player.king, @board.state, coordinates[1].reverse) if move_valid
-      puts "Invalid move, your King would be at risk" if !move_valid
+      if move_valid
+        p "first msp"
+        move_selected_piece(@board.state, coordinates)
+        move_valid = king_safe?(@current_player.king, @board.state, coordinates) 
+        if !move_valid
+          puts "Invalid move, your King would be at risk"
+          move_selected_piece(@board.state, coordinates.reverse)
+        end
+      end
     end
-    move_selected_piece(@board.state, coordinates)
   end
   
   private
@@ -111,7 +117,8 @@ class Chess
     board[coordinates[0][1]][coordinates[0][0]] = nil
   end
   
-  def king_safe? (king, board, king_position)
+  def king_safe? (king, board, coordinates)
+    king_position = board[coordinates[0][1]][coordinates[0][0]].class == King ? coordinates[1].reverse : king.position
     danger_zones = []
     row = 0
     while row < 8
@@ -126,7 +133,9 @@ class Chess
       end
       row += 1
     end
-    return danger_zones.include?(king_position) ? false : true # temporary
+    p danger_zones
+    p king_position
+    return danger_zones.include?(king_position) ? false : true
   end
   
   def save_state

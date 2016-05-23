@@ -15,5 +15,5 @@ loop do
   p "Game start"
   print game.board.draw_board(game.board.state)
   game.move
-  # game.switch_players
+  game.switch_players
 end
