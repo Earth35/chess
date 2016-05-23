@@ -6,6 +6,8 @@ class Chess
     @player_1 = Player.new(:white)
     @player_2 = Player.new(:black)
     @board = Board.new
+    @player_1.king = @board.state[0][4]
+    @player_2.king = @board.state[7][4]
     @current_player = @player_1
   end
   
@@ -41,6 +43,7 @@ class Chess
       raw_coords = user_input.split(/, /)
       coordinates = input_to_coords(raw_coords[0], raw_coords[1])
       move_valid = validate_move(@board.state, coordinates)
+      # move_valid = king_safe?(@current_player.king, @board.state) if move_valid
     end
     move_selected_piece(@board.state, coordinates)
   end
@@ -106,6 +109,23 @@ class Chess
     board[coordinates[1][1]][coordinates[1][0]].position = [coordinates[1][1], coordinates[1][0]]
     board[coordinates[0][1]][coordinates[0][0]] = nil
   end
+  
+  # def king_safe? (king, board)
+    # danger_zones = []
+    # row = 0
+    # while row < 8
+      # column = 0
+      # while column < 8
+        # position = board[row][column]
+        # unless position.nil?
+          # # danger_zones.concat(position.danger_zones(@board)) if position.color != king.color # foo - check reachable squares
+        # end
+        # column += 1
+      # end
+      # row += 1
+    # end
+    # return danger_zones.include?(king.position) ? false : true # temporary
+  # end
   
   def save_state
     # to be done

@@ -1,10 +1,11 @@
 class Pawn < Piece
-  attr_reader :symbol
+  attr_reader :symbol, :attack_vectors
   attr_accessor :first_move
   def initialize (color, position)
     super(color, position)
     @symbol = Piece.set_symbol(color, "P", "p")
     @first_move = true
+    @attack_vectors = @color == :white ? [[-1, 1], [1, 1]] : [[-1, -1], [1, -1]]
   end
   
   def movement_valid? (board, coordinates)
@@ -17,6 +18,24 @@ class Pawn < Piece
       result = pawn_movement([[0,-1], [0,-2], [1,-1], [-1, -1]], myself, vector, board, coordinates) # check for black pawns
     end
     
+  end
+  
+  def danger_zones (board)
+    danger_zones = []
+    @attack_vectors.each do |vector|
+      new_row = @position[0] + vector[1]
+      new_col = @position[1] + vector[0]
+      unless new_row < 0 || new_col < 0
+        potential_pos = [new_row, new_col]
+        potential_danger_zone = board[potential_pos[0]][potential_pos[1]]
+        if potential_danger_zone.nil?
+          danger_zones << potential_pos
+        elsif potential_danger_zone.color != @color
+          danger_zones << potential_pos
+        end
+      end
+    end
+    return danger_zones
   end
   
   private
