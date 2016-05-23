@@ -43,7 +43,8 @@ class Chess
       raw_coords = user_input.split(/, /)
       coordinates = input_to_coords(raw_coords[0], raw_coords[1])
       move_valid = validate_move(@board.state, coordinates)
-      # move_valid = king_safe?(@current_player.king, @board.state) if move_valid
+      move_valid = king_safe?(@current_player.king, @board.state, coordinates[1].reverse) if move_valid
+      puts "Invalid move, your King would be at risk" if !move_valid
     end
     move_selected_piece(@board.state, coordinates)
   end
@@ -110,22 +111,23 @@ class Chess
     board[coordinates[0][1]][coordinates[0][0]] = nil
   end
   
-  # def king_safe? (king, board)
-    # danger_zones = []
-    # row = 0
-    # while row < 8
-      # column = 0
-      # while column < 8
-        # position = board[row][column]
-        # unless position.nil?
-          # # danger_zones.concat(position.danger_zones(@board)) if position.color != king.color # foo - check reachable squares
-        # end
-        # column += 1
-      # end
-      # row += 1
-    # end
-    # return danger_zones.include?(king.position) ? false : true # temporary
-  # end
+  def king_safe? (king, board, king_position)
+    danger_zones = []
+    row = 0
+    while row < 8
+      column = 0
+      while column < 8
+        position = board[row][column]
+        unless position.nil?
+          p "Current position: #{row}, #{column} (#{position})"
+          danger_zones = danger_zones.concat(position.danger_zones(board)).uniq if position.color != king.color
+        end
+        column += 1
+      end
+      row += 1
+    end
+    return danger_zones.include?(king_position) ? false : true # temporary
+  end
   
   def save_state
     # to be done

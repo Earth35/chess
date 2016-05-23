@@ -19,7 +19,7 @@ class King < Piece
     @valid_vectors.each do |vector|
       new_row = @position[0] + vector[1]
       new_col = @position[1] + vector[0]
-      unless new_row < 0 || new_col < 0
+      if (0..7).include?(new_row) && (0..7).include?(new_col)
         potential_pos = [new_row, new_col]
         potential_danger_zone = board[potential_pos[0]][potential_pos[1]]
         if potential_danger_zone.nil?
