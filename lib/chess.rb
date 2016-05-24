@@ -219,7 +219,6 @@ class Chess
   def promotion? (board, coordinates)
     reached_square = [coordinates[1][1], coordinates[1][0]]
     moved_piece = board[reached_square[0]][reached_square[1]]
-    p reached_square
     if moved_piece.class == Pawn
       board[reached_square[0]][reached_square[1]] = promote(moved_piece, reached_square) if moved_piece.promotion_zone.include?(reached_square)
     end
