@@ -1,8 +1,9 @@
 class Chess
-  attr_reader :player_1, :player_2
+  attr_reader :player_1, :player_2, :save_file
   attr_accessor :board, :current_player
   
   def initialize
+    @save_file = './lib/save.yaml'
     @player_1 = Player.new(:white)
     @player_2 = Player.new(:black)
     @board = Board.new
@@ -108,6 +109,7 @@ class Chess
   protected
   
   def begin_game
+    puts "#{@current_player.color.to_s.capitalize} player's turn."
     loop do
       draw_board
       move
@@ -254,11 +256,22 @@ class Chess
   end
   
   def save_state
-    # to be done
+    File.open(@save_file, "w") do |file|
+      save_state = YAML::dump(self)
+      file.write(save_state)
+    end
   end
   
   def load_game
-    # tbd
+    puts "Loading..."
+    if File.exist?(@save_file)
+      saved_state = File.open(@save_file, "r")
+      game = saved_state.read
+      YAML::load(game).begin_game
+    else
+      puts "No saved state found. Starting new game."
+      self.begin_game
+    end
   end
   
   def game_over (winner)
