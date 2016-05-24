@@ -11,20 +11,21 @@ class Chess
     @current_player = @player_1
   end
   
-  ###########
-  #TEMPORARY#
-  ###########
-  def switch_players
-    if @current_player == @player_1
-      @current_player = @player_2
-    else
-      @current_player = @player_1
+  def start
+    draw_title
+    puts "Would you like to START a new game or LOAD saved state?"
+    choice = gets.chomp.downcase
+    while choice !~ /^start$|^load$/
+      puts "Invalid input. Start/load only:"
+      choice = gets.chomp.downcase
     end
-    puts "Switched players."
+    case choice
+    when "start"
+      begin_game
+    when "load"
+      load_game
+    end
   end
-  ###########
-  #TEMPORARY#
-  ###########
   
   def move
     move_valid = false
@@ -104,7 +105,31 @@ class Chess
     return status
   end
   
+  protected
+  
+  def begin_game
+    loop do
+      draw_board
+      move
+      if checkmate?
+        draw_board
+        break
+      end
+      switch_players
+    end
+  end
+  
   private
+  
+  def draw_title
+    puts "--==*=*=*==--".center(50, " ")
+    puts "-=*=- Chess -=*=-".center(50, " ")
+    puts "--==*=*=*==--".center(50, " ")
+  end
+  
+  def draw_board
+    print @board.draw_board(@board.state)
+  end
   
   # converts strings to arrays of coordinates, e.g. "a1" and "a2" => [[0, 0], [0, 1]]
   # arguments must be validated and properly formatted beforehand
@@ -219,8 +244,21 @@ class Chess
     return square
   end
   
+  def switch_players
+    if @current_player == @player_1
+      @current_player = @player_2
+    else
+      @current_player = @player_1
+    end
+    puts "#{@current_player.color.to_s.capitalize} player's turn."
+  end
+  
   def save_state
     # to be done
+  end
+  
+  def load_game
+    # tbd
   end
   
   def game_over (winner)
