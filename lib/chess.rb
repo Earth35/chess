@@ -33,7 +33,7 @@ class Chess
       user_input = gets.chomp.downcase # e.g. a0, a1
       if user_input == 'save'
         save_state # under construction!
-        puts "Please make a move:"
+        puts "Game saved. Please make a move:"
         user_input = gets.chomp.downcase # e.g. a0, a1
       end
       until input_valid?(user_input)  # checkpoint 1 - checks if the player doesn't try to move beyond the board
@@ -54,6 +54,7 @@ class Chess
         end
       end
     end
+    promotion_status = promotion?(@board.state, coordinates)
   end
   
   def checkmate?
@@ -76,13 +77,16 @@ class Chess
           if position.color == opponent.king.color
             next_possible_moves = position.danger_zones(@board.state)
             next_possible_moves.each do |move|
+              # mock piece movement for checkmate / checkmate countering testing
               move_selected_piece_mock(@board.state, [[col, row], move.reverse])
               new_danger_zones = find_danger_zones(opponent.king, @board.state)
               if !new_danger_zones.include?(opponent.king.position)
                 countermeasures = true
+                # revert mock move, stop searching - found at least 1 move
                 move_selected_piece_mock(@board.state, [move.reverse, [col, row]])
                 break
               end
+              # revert mock move
               move_selected_piece_mock(@board.state, [move.reverse, [col, row]])
             end
           end
@@ -96,6 +100,7 @@ class Chess
       puts "Checkmate!"
       status = game_over(@current_player)
     end
+    # return true on checkmate, otherwise return false
     return status
   end
   
@@ -183,6 +188,35 @@ class Chess
       row += 1
     end
     return danger_zones
+  end
+  
+  def promotion? (board, coordinates)
+    reached_square = [coordinates[1][1], coordinates[1][0]]
+    moved_piece = board[reached_square[0]][reached_square[1]]
+    p reached_square
+    if moved_piece.class == Pawn
+      board[reached_square[0]][reached_square[1]] = promote(moved_piece, reached_square) if moved_piece.promotion_zone.include?(reached_square)
+    end
+  end
+  
+  def promote (square, coordinates)
+    puts "Promotion! Choose desired piece: 'R'ook, k'N'ight, 'B'ishop or 'Q'ueen?"
+    selection = gets.chomp.downcase
+    while selection !~ /^[rnbq]$/
+      puts "Invalid input. R/N/B/Q:"
+      selection = gets.chomp.downcase
+    end
+    case selection
+    when 'r'
+      square = Rook.new(square.color, coordinates)
+    when 'n'
+      square = Knight.new(square.color, coordinates)
+    when 'b'
+      square = Bishop.new(square.color, coordinates)
+    when 'q'
+      square = Queen.new(square.color, coordinates)
+    end
+    return square
   end
   
   def save_state
