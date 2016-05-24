@@ -34,7 +34,7 @@ class Chess
       puts "Make a move or type 'save' to save the game:"
       user_input = gets.chomp.downcase # e.g. a0, a1
       if user_input == 'save'
-        save_state # under construction!
+        save_state
         puts "Game saved. Please make a move:"
         user_input = gets.chomp.downcase # e.g. a0, a1
       end
